@@ -1,49 +1,46 @@
 //...
 
-package istic.pr.socket.tcp.echo;
+package istic.pr.socket.tcp.nom;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class ServeurTCP {
 
     public static void main(String[] args) throws IOException {
 
-        // Port sur lequel le serveur est branché
-        int portServeur = 9999;
+        // Port sur lequel on écoute
+        int portEcoute = 9999;
 
         // Création d'un socket lié au port d'écoute défini ci-dessus
-        ServerSocket socketServeur = new ServerSocket(portServeur);
+        ServerSocket socketServeur = new ServerSocket(portEcoute);
 
         while(true) {
-            // Message d'information
             System.out.println("Attente des clients.");
 
             try (Socket socketClient = socketServeur.accept()) {
                 System.out.println("Client -> " + socketClient.getInetAddress() + " connecté.");
                 traiterSocketCliente(socketClient);
             } catch (IOException e) {
-                System.out.println("Erreur ->" + e.getMessage());
+                System.out.println("Erreur (" + e.getMessage() + ")");
             }
         }
     }
 
     public static void traiterSocketCliente(Socket socketVersUnClient) throws IOException {
-        // Création du reader et printer
+        // On crée un buffer
         BufferedReader reader = creerReader(socketVersUnClient);
+        // On crée uun writer
         PrintWriter writer = creerPrinter(socketVersUnClient);
 
         String messageRecu = recevoirMessage(reader);
 
-        // Tant qu'il y a des un message à recevoir on boucle
         while(messageRecu != null) {
-            // On affiche le message lu
             System.out.println(messageRecu);
-
-            // On envoie le message au client
             envoyerMessage(writer, messageRecu);
-
-            // On check le prochain message
             messageRecu = recevoirMessage(reader);
         }
         // On ferme le socket
