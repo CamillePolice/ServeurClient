@@ -32,7 +32,7 @@ public class ServeurTCP {
         else
             System.out.println("Pas de charset détecté");
 
-        Executor service = Executors.newFixedThreadPool(4);
+        Executor service = Executors.newFixedThreadPool(5);
 
         while(true) {
             System.out.println("Attente des clients.");
