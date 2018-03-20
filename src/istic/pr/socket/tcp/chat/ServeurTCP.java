@@ -9,6 +9,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class ServeurTCP {
 
@@ -30,12 +32,14 @@ public class ServeurTCP {
         else
             System.out.println("Pas de charset détecté");
 
+        Executor service = Executors.newFixedThreadPool(4);
+
         while(true) {
             System.out.println("Attente des clients.");
 
             try (Socket socketClient = socketServeur.accept()) {
                 System.out.println("Client -> " + socketClient.getInetAddress() + " connecté.");
-                traiterSocketCliente(socketClient, charset);
+                service.execute(new TraiteUnClient(socketClient, charset));
             } catch (IOException e) {
                 System.out.println("Erreur (" + e.getMessage() + ")");
             }
