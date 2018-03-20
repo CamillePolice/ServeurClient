@@ -35,7 +35,7 @@ public class ServeurTCP {
 
             try (Socket socketClient = socketServeur.accept()) {
                 System.out.println("Client -> " + socketClient.getInetAddress() + " connecté.");
-                traiterSocketCliente(socketClient, charset);
+                service.execute(new TraiteUnClient(socketClient, charset));
             } catch (IOException e) {
                 System.out.println("Erreur (" + e.getMessage() + ")");
             }
