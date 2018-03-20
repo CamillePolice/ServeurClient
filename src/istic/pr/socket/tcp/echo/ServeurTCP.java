@@ -33,6 +33,7 @@ public class ServeurTCP {
         BufferedReader reader = creerReader(socketVersUnClient);
         PrintWriter writer = creerPrinter(socketVersUnClient);
 
+
         String messageRecu = recevoirMessage(reader);
 
         // Tant qu'il y a des un message à recevoir on boucle
@@ -41,7 +42,7 @@ public class ServeurTCP {
             System.out.println(messageRecu);
 
             // On envoie le message au client
-            envoyerMessage(writer, messageRecu);
+            envoyerMessage(writer, "Message" + ">" + messageRecu);
 
             // On check le prochain message
             messageRecu = recevoirMessage(reader);
@@ -66,5 +67,4 @@ public class ServeurTCP {
     public static void envoyerMessage(PrintWriter printer, String message) throws IOException {
         ClientTCP.envoyerMessage(printer, message);
     }
-
 }

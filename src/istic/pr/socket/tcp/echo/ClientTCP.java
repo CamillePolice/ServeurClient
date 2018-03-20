@@ -56,7 +56,7 @@ public class ClientTCP {
     }
 
     public static PrintWriter creerPrinter(Socket socketVersUnClient) throws IOException {
-        PrintWriter printerOut = new PrintWriter(new PrintStream(socketVersUnClient.getOutputStream()));
+        PrintWriter printerOut = new PrintWriter(new OutputStreamWriter(socketVersUnClient.getOutputStream()));
         return printerOut;
     }
 
@@ -77,5 +77,4 @@ public class ClientTCP {
         p.println(message);
         p.flush();
     }
-
 }

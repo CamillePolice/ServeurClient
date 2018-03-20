@@ -1,4 +1,4 @@
-package istic.pr.socket.tcp.nom;
+package istic.pr.socket.tcp.thread;
 
 import java.io.*;
 import java.net.Socket;
@@ -12,17 +12,26 @@ public class ClientTCP {
 
         // Nom
         String nom = "";
+        // Charset par défaut;
+        String charset = "UTF-8";
+
         // On vérifie si il y a bien un argument
-        if (args.length >= 1)
+        if (args.length >= 1) {
             nom = args[0];
+            // On vérifie si il y a bien un deuxième argument
+            if(args.length >= 2)
+                charset = args[1];
+            else
+                System.out.println("Par de charset détecté");
+        }
         else
             System.out.println("Pas de nom trouvé.");
 
         try (Socket socketVersLeServeur = new Socket(adresseServeur, portServeur)) {
 
             //créer reader et writer associés au socket
-            BufferedReader reader = creerReader(socketVersLeServeur);
-            PrintWriter printer = creerPrinter(socketVersLeServeur);
+            BufferedReader reader = creerReader(socketVersLeServeur, charset);
+            PrintWriter printer = creerPrinter(socketVersLeServeur, charset);
 
             // On envoit le nom au serveur
             envoyerNom(printer, nom);
@@ -53,13 +62,13 @@ public class ClientTCP {
     }
 
 
-    public static BufferedReader creerReader(Socket socketVersUnClient) throws IOException {
-        BufferedReader readerIn = new BufferedReader(new InputStreamReader(socketVersUnClient.getInputStream()));
+    public static BufferedReader creerReader(Socket socketVersUnClient, String charset) throws IOException {
+        BufferedReader readerIn = new BufferedReader(new InputStreamReader(socketVersUnClient.getInputStream(), charset));
         return readerIn;
     }
 
-    public static PrintWriter creerPrinter(Socket socketVersUnClient) throws IOException {
-        PrintWriter printerOut = new PrintWriter(new OutputStreamWriter(socketVersUnClient.getOutputStream()));
+    public static PrintWriter creerPrinter(Socket socketVersUnClient, String charset) throws IOException {
+        PrintWriter printerOut = new PrintWriter(new OutputStreamWriter(socketVersUnClient.getOutputStream(), charset));
         return printerOut;
     }
 

@@ -1,12 +1,14 @@
 //...
 
-package istic.pr.socket.tcp.nom;
+package istic.pr.socket.tcp.thread;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class ServeurTCP {
 
@@ -18,23 +20,33 @@ public class ServeurTCP {
         // Création d'un socket lié au port d'écoute défini ci-dessus
         ServerSocket socketServeur = new ServerSocket(portEcoute);
 
+        // Charset
+        String charset = "UTF-8";
+        // On vérifie qu'il y a l'argument
+        if(args.length >= 1)
+            charset = args[0];
+        else
+            System.out.println("Pas de charset détecté");
+
+        Executor service = Executors.newFixedThreadPool(5);
+
         while(true) {
             System.out.println("Attente des clients.");
 
             try (Socket socketClient = socketServeur.accept()) {
                 System.out.println("Client -> " + socketClient.getInetAddress() + " connecté.");
-                traiterSocketCliente(socketClient);
+                traiterSocketCliente(socketClient, charset);
             } catch (IOException e) {
                 System.out.println("Erreur (" + e.getMessage() + ")");
             }
         }
     }
 
-    public static void traiterSocketCliente(Socket socketVersUnClient) throws IOException {
+    public static void traiterSocketCliente(Socket socketVersUnClient, String charset) throws IOException {
         // On crée un buffer
-        BufferedReader reader = creerReader(socketVersUnClient);
+        BufferedReader reader = creerReader(socketVersUnClient, charset);
         // On crée uun writer
-        PrintWriter writer = creerPrinter(socketVersUnClient);
+        PrintWriter writer = creerPrinter(socketVersUnClient, charset);
 
         // Nom
         String nom = avoirNom(reader);
@@ -58,12 +70,12 @@ public class ServeurTCP {
         socketVersUnClient.close();
     }
 
-    public static BufferedReader creerReader(Socket socketVersUnClient) throws IOException {
-        return ClientTCP.creerReader(socketVersUnClient);
+    public static BufferedReader creerReader(Socket socketVersUnClient, String charset) throws IOException {
+        return ClientTCP.creerReader(socketVersUnClient, charset);
     }
 
-    public static PrintWriter creerPrinter(Socket socketVersUnClient) throws IOException {
-        return ClientTCP.creerPrinter(socketVersUnClient);
+    public static PrintWriter creerPrinter(Socket socketVersUnClient, String charset) throws IOException {
+        return ClientTCP.creerPrinter(socketVersUnClient, charset);
     }
 
     public static String recevoirMessage(BufferedReader reader) throws IOException {
